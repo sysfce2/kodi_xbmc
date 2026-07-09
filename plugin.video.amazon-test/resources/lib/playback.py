@@ -474,6 +474,7 @@ def PlayVideo(name, asin, adultstr, streamtype, forcefb=0):
 
         player = _AmazonPlayer()
         player.asin = asin
+        player.dtid = dtid
         player.cookie = cookie
         player.content = streamtype
         player.extern = extern
@@ -656,6 +657,7 @@ class _AmazonPlayer(xbmc.Player):
         self.video_lastpos = 0
         self.video_totaltime = 0
         self.dbid = 0
+        self.dtid = None
         self.asin = ''
         self.cookie = None
         self.interval = 60
@@ -748,7 +750,7 @@ class _AmazonPlayer(xbmc.Player):
             return
         perc = (self.video_lastpos * 100) / self.video_totaltime if self.video_lastpos > 0 and self.video_totaltime > 0 else 0
         if 0 < self.sendvp <= perc:
-            suc, msg = getURLData('usage/UpdateStream', self.asin, useCookie=self.cookie, opt=f'&event={self.event}&timecode={self.video_lastpos}')
+            suc, msg = getURLData('usage/UpdateStream', self.asin, useCookie=self.cookie, devicetypeid=self.dtid, opt=f'&event={self.event}&timecode={self.video_lastpos}')
             self.event = 'PLAY'
             if suc and 'statusCallbackIntervalSeconds' in str(msg):
                 self.interval = msg['message']['body']['statusCallbackIntervalSeconds']
